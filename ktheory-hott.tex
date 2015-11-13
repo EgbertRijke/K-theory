@@ -67,6 +67,36 @@ A group structure on a type $X$ consists of a connected pointed type $X'$, such
 that $X$ is the loop space of $X'$.
 \end{defn}
 
+\subsection{The Cayley-Dickson construction}
+
+\begin{defn}
+A \define{Cayley-Dickson algebra} consists of a type $A$, and operations
+\begin{align*}
+\mu & : A\times A\to A \\
+x\mapsto x^\ast & : A\to A \\
+x\mapsto -x & : A\to A
+\end{align*}
+\end{defn}
+
+\begin{defn}
+Let $A$ be a Cayley-Dickson algebra. Then the join $\join{A}{A}$ can also be
+given the structure of a Cayley-Dickson algebra.
+\end{defn}
+
+\begin{proof}[Construction]
+We first have to define the multiplication on $A$. Since $(\join{A}{A})\times
+(\join{A}{A})$ is a pushout, it suffices to define two $A$-actions $a_0$ and
+$a_1$ on $\join{A}{A}$, for which the outer square in the diagram
+\begin{equation*}
+\begin{tikzcd}
+A\times A\times(\join{A}{A}) \arrow[r] \arrow[d] & A\times(\join{A}{A}) \arrow[d] \arrow[ddr,bend left=15,"a_1"] \\
+A\times(\join{A}{A}) \arrow[r] \arrow[drr,bend right=15,swap,"a_0"] & (\join{A}{A})\times(\join{A}{A}) \arrow[dr,densely dotted] \\
+& & \join{A}{A}
+\end{tikzcd}
+\end{equation*}
+commutes. 
+\end{proof}
+
 \subsection{The group structure of $\Sn^0$}
 
 Of course, $\Sn^0$ is just the type $\bool$, so it has the group structure of
@@ -172,6 +202,11 @@ diagram
 \end{tikzcd}
 \end{equation*}
 \end{defn}
+
+\begin{thm}
+For each $x:\Sn^1$, the functions $\mu_1(x,\blank)$ and $\mu_1(\blank,x)$ are
+equivalences. 
+\end{thm}
 
 \subsection{The group structure of $\Sn^3$}
 We want to describe the group structure of $\Sn^3$ explicitly, i.e.~we want to
