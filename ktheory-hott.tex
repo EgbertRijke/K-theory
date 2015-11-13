@@ -1,0 +1,265 @@
+\documentclass{article}
+
+\input{preamble-articles}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% We define a command \@ifnextcharamong accepting an arbitrary number of
+%%%% arguments. The first is what it should do if a match is found, the second
+%%%% contains what it should do when no match is found; all the other arguments
+%%%% are the things it tries to find as the next character.
+%%%%
+%%%% For example \@ifnextcharamong{#1}{#2}{*}{\bgroup} expands #1 if the next
+%%%% character is a * or a \bgroup and it expands #2 otherwise.
+
+\newcommand{\projective}[1]{\mathbb{R}\mathsf{P}^{#1}}
+\newcommand{\antipodal}[1]{\mathsf{antipodal}_{#1}}
+
+\makeatletter
+\newcommand{\@ifnextcharamong}[2]
+  {\@ifnextchar\bgroup{\@@ifnextchar{#1}{\@@ifnextcharamong{#1}{#2}}}{#2}}
+\newcommand{\@@ifnextchar}[3]{\@ifnextchar{#3}{#1}{#2}}
+\newcommand{\@@ifnextcharamong}[3]{\@ifnextcharamong{#1}{#2}}
+\makeatother
+
+\newcommand{\ucomp}[1]{\hat{#1}}
+\newcommand{\finset}[1]{{[#1]}}
+
+\makeatletter
+\newcommand{\higherequifibsf}{\mathcal}
+\newcommand{\higherequifib}[2]{\higherequifibsf{#1}(#2)}
+\newcommand{\underlyinggraph}[1]{U(#1)}
+\newcommand{\theequifib}[1]{{\def\higherequifibsf{}#1}}
+\makeatother
+
+\newcommand{\loopspace}[2][]{\typefont{\Omega}^{#1}(#2)}
+\newcommand{\join}[2]{{#1}*{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{K-theory}
+\date{\today}
+\author{Ulrik Buchholtz \& Egbert Rijke}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{The group structures on $\Sn^1$, $\Sn^3$ and $\Sn^7$}
+Classically, the $1$, $3$ and $7$ dimensional spheres are subspaces of $\mathbb{R}^2$,
+$\mathbb{R}^4$ and $\mathbb{R}^8$, respectively. Each of these vector spaces can be
+given the structure of normed division algebras, and we get the complex numbers
+$\mathbb{C}$, Hamilton's quaternions $\mathbb{H}$, and the octonions $\mathbb{O}$
+of Graves and Cayley. Since, in each of these algebras, the product preserves
+the norm, the unit sphere is a subgroup of the multiplicative group.
+
+In the case of the circle, this group structure has already been formalized and
+appears in \cite{TheBook}. Formalizing the notion of group structure on a type
+of truncation level strictly bigger than $1$, is tricky, because it involves
+higher coherences. However, a class of types with a natural group structure
+consists of types of the form $\Omega(X)$, and types which have group structure
+judgmentally are types of the form $\mathsf{Aut}(X)$. 
+
+Classically, it is known that $B(\Sn^3)=\mathbb{H}\mathsf{P}^\infty=K(\mathbb{Q},4)$. 
+
+\begin{defn}
+A group structure on a type $X$ consists of a connected pointed type $X'$, such
+that $X$ is the loop space of $X'$.
+\end{defn}
+
+\subsection{The group structure of $\Sn^0$}
+
+Of course, $\Sn^0$ is just the type $\bool$, so it has the group structure of
+$\Z_2$.
+
+\begin{defn}
+We define multiplication $\mu_0:\Sn^0\times\Sn^0\to\Sn^0$ by
+\begin{align*}
+\mu_0(\north,\north) & \defeq \north \\
+\mu_0(\north,\south) & \defeq \south \\
+\mu_0(\south,\north) & \defeq \south \\
+\mu_0(\south,\south) & \defeq \north
+\end{align*}
+\end{defn}
+
+\subsection{The group structure of $\Sn^1$}
+This has already been described in \cite{TheBook}. We do it slightly differently,
+to be able to generalize it to dimensions 3 and 7.
+
+\begin{defn}
+The circle $\Sn^1$ is the join $\join{\Sn^0}{\Sn^0}$. 
+We denote the two point constructors $\Sn^0\to\Sn^1$ by $e_0$ and $e_1$. 
+\end{defn}
+
+The circle looks like this
+\begin{equation*}
+\begin{tikzcd}[column sep=small]
+& e_1(\north) \arrow[dl,bend right=35,equals,swap,"\alpha_2"] \\
+e_0(\south) \arrow[dr,bend right=35,equals,swap,"\alpha_3"] & & e_0(\north) \arrow[ul,bend right=35,equals,swap,"\alpha_1"] \\
+& e_1(\south) \arrow[ur,bend right=35,equals,swap,"\alpha_4"] 
+\end{tikzcd}
+\end{equation*}
+Just as with the circle in the complex plane, the group operation on the circle
+will be given by rotation. So, $e_0(\north)$ will be the unit of the group,
+$e_1(\north)$ will rotate a quarter counter-clockwise, $e_0(\south)$ will rotate
+half around counter-clockwise, and $e_1(\south)$ will rotate three quarters
+counter-clockwise.
+
+\begin{defn}
+The circle has two $\Sn^0$-actions, i.e. functions $a_0$ and $a_1$ of type
+\begin{equation*}
+\Sn^0\times\Sn^1\to\Sn^1.
+\end{equation*}
+\end{defn}
+
+\begin{proof}[Construction]
+Note that $\Sn^0\times\Sn^1$ is a pushout, so we may define the $\Sn^0$-action $a_0$
+on $\Sn^1$ by
+\begin{equation*}
+\begin{tikzcd}
+\Sn^0\times\Sn^0\times\Sn^0 \arrow[r,"\pi_{1,3}"] \arrow[d,swap,"\pi_{1,2}"] & \Sn^0\times\Sn^0 \arrow[d,"\idfunc\times e_1"] \arrow[r,"\mu_0"] & \Sn^0 \arrow[dd,"e_1"] \\
+\Sn^0\times\Sn^0 \arrow[d,swap,"\mu_0"] \arrow[r,"\idfunc\times e_0"] & \Sn^0\times\Sn^1 \arrow[dr,densely dotted,"a_0"] \\
+\Sn^0 \arrow[rr,swap,"e_0"] & & \Sn^1
+\end{tikzcd}
+\end{equation*}
+Thus, we have to show that the square commutes. This, we do via the table
+\begin{center}
+\begin{tabular}{ccc|cc|l}
+$x$ & $y$ & $z$ & $e_0(\mu_0(x,y))$ & $e_1(\mu_0(x,z))$ & identification \\
+\midrule
+$\north$ & $\north$ & $\north$ & $e_0(\north)$ & $e_1(\north)$ & $\alpha_1$ \\
+$\north$ & $\north$ & $\south$ & $e_0(\north)$ & $e_1(\south)$ & $\ct{\alpha_1}{\alpha_2}{\alpha_3}$ \\
+$\north$ & $\south$ & $\north$ & $e_0(\south)$ & $e_1(\north)$ & $\ct{\alpha_3}{\alpha_4}{\alpha_1}$ \\
+$\north$ & $\south$ & $\south$ & $e_0(\south)$ & $e_1(\south)$ & $\alpha_3$ \\
+$\south$ & $\north$ & $\north$ & $e_0(\south)$ & $e_1(\north)$ & $\ct{\alpha_3}{\alpha_4}{\alpha_1}$ \\
+$\south$ & $\north$ & $\south$ & $e_0(\south)$ & $e_1(\south)$ & $\alpha_3$ \\
+$\south$ & $\south$ & $\north$ & $e_0(\north)$ & $e_1(\north)$ & $\alpha_1$ \\
+$\south$ & $\south$ & $\south$ & $e_0(\north)$ & $e_1(\south)$ & $\ct{\alpha_1}{\alpha_2}{\alpha_3}$
+\end{tabular}
+\end{center}
+Similarly, we may define the $\Sn^0$-action $a_1$ on $\Sn^1$ by
+\begin{equation*}
+\begin{tikzcd}
+\Sn^0\times\Sn^0\times\Sn^0 \arrow[r,"\pi_{1,3}"] \arrow[d,swap,"\pi_{1,2}"] & \Sn^0\times\Sn^0 \arrow[d,"\idfunc\times e_1"] \arrow[r,"\mu_0"] & \Sn^0 \arrow[dd,"e_0"] \\
+\Sn^0\times\Sn^0 \arrow[d,swap,"\mu_0"] \arrow[r,"\idfunc\times e_0"] & \Sn^0\times\Sn^1 \arrow[dr,densely dotted,"a_0"] \\
+\Sn^0 \arrow[rr,swap,"e_1"] & & \Sn^1
+\end{tikzcd}
+\end{equation*}
+Thus, we have to show that the square commutes. This, we do via the table
+\begin{center}
+\begin{tabular}{ccc|cc|l}
+$x$ & $y$ & $z$ & $e_1(\mu_0(x,y))$ & $e_0(\mu_0(x,z))$ & identification \\
+\midrule
+$\north$ & $\north$ & $\north$ & $e_1(\north)$ & $e_0(\north)$ & $\ct{\alpha_2}{\alpha_3}{\alpha_4}$ \\
+$\north$ & $\north$ & $\south$ & $e_1(\south)$ & $e_0(\north)$ & $\alpha_4$ \\
+$\north$ & $\south$ & $\north$ & $e_1(\north)$ & $e_0(\south)$ & $\alpha_2$ \\
+$\north$ & $\south$ & $\south$ & $e_1(\south)$ & $e_0(\south)$ & $\ct{\alpha_4}{\alpha_1}{\alpha_2}$ \\
+$\south$ & $\north$ & $\north$ & $e_1(\north)$ & $e_0(\south)$ & $\alpha_2$ \\
+$\south$ & $\north$ & $\south$ & $e_1(\south)$ & $e_0(\south)$ & $\ct{\alpha_4}{\alpha_1}{\alpha_2}$ \\
+$\south$ & $\south$ & $\north$ & $e_1(\north)$ & $e_0(\north)$ & $\ct{\alpha_2}{\alpha_3}{\alpha_4}$ \\
+$\south$ & $\south$ & $\south$ & $e_1(\south)$ & $e_0(\north)$ & $\alpha_4$
+\end{tabular}
+\end{center}
+\end{proof}
+
+\begin{defn}
+We define $\mu_1:\Sn^1\times\Sn^1\to\Sn^1$ to be the unique map for which the
+diagram
+\begin{equation*}
+\begin{tikzcd}
+(\Sn^1\times\Sn^1)\times\Sn^3 \arrow[r] \arrow[d] & \Sn^1\times\Sn^3 \arrow[d] \\
+\Sn^1\times\Sn^3 \arrow[r] & \Sn^3
+\end{tikzcd}
+\end{equation*}
+\end{defn}
+
+\subsection{The group structure of $\Sn^3$}
+We want to describe the group structure of $\Sn^3$ explicitly, i.e.~we want to
+construct a map
+\begin{equation*}
+\mu_3 : \Sn^3\times \Sn^3\to\Sn^3.
+\end{equation*}
+Recall that $\eqv{\Sn^3}{\join{\Sn^1}{\Sn^1}}$. We write the inclusion maps
+as $i,j:\Sn^1\to \join{\Sn^1}{\Sn^1}$. There is a third map worth mentioning,
+corresponding to the circle in the $k$-th dimension.
+
+\begin{defn}
+We define the map $k:\Sn^1\to\join{\Sn^1}{\Sn^1}$ as the unique map for which
+the diagram
+\begin{equation*}
+\begin{tikzcd}
+\Sn^0\times\Sn^0 \arrow[r] \arrow[d] & \Sn^0 \arrow[d] \arrow[r] & \Sn^1 \arrow[dd,"i"] \\
+\Sn^0 \arrow[r] \arrow[d] & \Sn^1 \arrow[dr,densely dotted,"k"] \\
+\Sn^1 \arrow[rr,swap,"j"] & & \join{\Sn^1}{\Sn^1}. 
+\end{tikzcd}
+\end{equation*}
+commutes.
+\end{defn}
+
+To define a multiplication $\mu_3:\Sn^3\times\Sn^3\to\Sn^3$, it might be easier
+to first define the action of $i:\Sn^1\to\Sn^3$ on $\Sn^3$. In other words, we
+want to first define a map $\mu_3(i(\blank),\blank):\Sn^1\times\Sn^3\to\Sn^3$.
+Note that $\Sn^1\times\Sn^3$ is a pushout, so we may define $\mu_3(i(\blank),\blank)$
+to be the unique map making the square
+\begin{equation*}
+\begin{tikzcd}
+\Sn^1\times\Sn^1\times\Sn^1 \arrow[r] \arrow[d] & \Sn^1\times\Sn^1 \arrow[d,"\idfunc\times j"] \arrow[r,"\mu_1"] & \Sn^1 \arrow[dd,"k"] \\
+\Sn^1\times\Sn^1 \arrow[r,swap,"\idfunc\times i"] \arrow[d,swap,"\mu_1"] & \Sn^1\times\Sn^3 \arrow[dr,densely dotted] \\
+\Sn^1 \arrow[rr,swap,"i"] & & \Sn^3
+\end{tikzcd}
+\end{equation*}
+commute. For this to work, we have to verify that
+\begin{equation*}
+\lam{x}{y}{z}i(\mu_1(x,y))=\lam{x}{y}{z}k(\mu_1(x,z))
+\end{equation*}
+for each $x,y,z:\Sn^1$. 
+
+
+\section{Line bundles}
+
+\begin{defn}
+For any $n:\nat$, we define the \define{antipodal map} 
+\begin{equation*}
+\antipodal{n}:\Sn^n\to\Sn^n
+\end{equation*} 
+inductively, by defining $\antipodal{0}\defeq\mathsf{neg}:\bool\to\bool$, and by defining
+$\antipodal{n+1}$ to be the unique map specified by
+\begin{align*}
+\antipodal{n+1}(\north) & \defeq\south \\
+\antipodal{n+1}(\south) & \defeq\north \\
+\ap{\antipodal{n+1}}{\glue(x)} & \defeq \glue(\antipodal{n}(x)).
+\end{align*}
+\end{defn}
+
+\begin{defn}
+We define the \define{projective space} $\projective{n}$ to be the coequalizer of the parallel pair
+\begin{equation*}
+\begin{tikzcd}[column sep=huge]
+\Sn^n\arrow[r,yshift=.7ex,"\antipodal{n}"] \arrow[r,yshift=-.7ex,swap,"\idfunc"] & \Sn^n
+\end{tikzcd}
+\end{equation*}
+\end{defn}
+
+\begin{defn}
+We get the following commuting diagram
+\begin{equation*}
+\begin{tikzcd}[column sep=huge]
+\Sn^0 \arrow[r] \arrow[d,xshift=-.7ex,swap,"\mathsf{antipodal}_0"] \arrow[d,xshift=.7ex,"\idfunc"]
+& \Sn^1 \arrow[r] \arrow[d,xshift=-.7ex,swap,"\mathsf{antipodal}_1"] \arrow[d,xshift=.7ex,"\idfunc"]
+& \Sn^2 \arrow[r] \arrow[d,xshift=-.7ex,swap,"\mathsf{antipodal}_2"] \arrow[d,xshift=.7ex,"\idfunc"]
+& \cdots \\
+\Sn^0 \arrow[r] \arrow[d] & \Sn^1 \arrow[r] \arrow[d] & \Sn^2 \arrow[r] \arrow[d] & \cdots \\
+\projective{0} \arrow[r,densely dotted] & \projective{1} \arrow[r,densely dotted] & \projective{2} \arrow[r,densely dotted] & \cdots
+\end{tikzcd}
+\end{equation*}
+where the bottom maps are the uniqe maps which extend the circle inclusions.
+Thus, we may define $\projective{\infty}$ as the sequential colimit of $\projective{n}$. 
+\end{defn}
+
+\begin{conj}
+The type $\projective{\infty}$ is equivalent to the type $\frac{1}{2}\defeq\sm{X:\UU}\brck{X=\bool}$. 
+\end{conj}
+
+\end{document}
+
+
