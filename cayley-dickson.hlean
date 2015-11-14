@@ -113,6 +113,24 @@ section
   definition star [instance] : has_star carrier :=
   ⦃ has_star, star := join.elim (λa, inl (a*)) (λb, inr (-b)) (λa b, jglue (a*) (-b)) ⦄
 
+  /-
+    in the algebraic form, the Cayley-Dickson multiplication has:
+
+      (a,b)(c,d) = (a * c - d * b*, a* * d + c * b)
+  -/
+  definition mul [instance] : has_mul carrier :=
+  ⦃ has_mul,
+    mul := join.elim
+     (λa, join.elim
+       (λc, inl (a * c))
+       (λd, inr (a* * d))
+       (λc d, _))
+     (λb, join.elim
+       (λc, inr (c * b))
+       (λd, inl (- (d * b*)))
+       (λc d, _))
+     (λa b, _) ⦄
+
 end
 
 end homotopy
