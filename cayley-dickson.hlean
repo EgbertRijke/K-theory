@@ -6,7 +6,7 @@ Authors: Ulrik Buchholtz, Egbert Rijke
 Cayley-Dickson construction on the level of spheres.
 -/
 
-import algebra.group homotopy.join
+import algebra.group homotopy.join cubical.square
 
 open eq
 
@@ -117,19 +117,32 @@ section
     in the algebraic form, the Cayley-Dickson multiplication has:
 
       (a,b)(c,d) = (a * c - d * b*, a* * d + c * b)
+
+    here we do the spherical form where one of the coordinates is zero.
   -/
+  open eq.ops
   definition mul [instance] : has_mul carrier :=
   ⦃ has_mul,
     mul := join.elim
      (λa, join.elim
        (λc, inl (a * c))
        (λd, inr (a* * d))
-       (λc d, _))
+       (λc d, jglue (a * c) (a* * d)))
      (λb, join.elim
        (λc, inr (c * b))
-       (λd, inl (- (d * b*)))
-       (λc d, _))
-     (λa b, _) ⦄
+       (λd, inl (- d * b*))
+       (λc d, by apply (jglue (- d * b*) (c * b))⁻¹))
+     (λa b, 
+     begin
+       apply eq_of_homotopy,
+       fapply join.rec,
+       { intro c, apply jglue (a * c) (c * b) },
+       { intro d, apply (jglue (- d * b*) (a* * d))⁻¹ },
+       { intros c d, apply eq_pathover,
+         krewrite [join.elim_glue,join.elim_glue],
+       }
+     end
+     ) ⦄
 
 end
 
