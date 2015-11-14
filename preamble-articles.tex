@@ -1,6 +1,5 @@
 % for type setting urls
 \usepackage[hyphens]{url} % This package has to be loaded *before* hyperref
-\usepackage[pagebackref,colorlinks,citecolor=darkgreen,linkcolor=darkgreen,unicode]{hyperref}
 \usepackage[english]{babel}
 
 %%% Because Germans have umlauts and Slavs have even stranger ways of mangling letters
@@ -27,10 +26,11 @@
 \usepackage{enumitem,mathtools,xspace,xcolor}
 \definecolor{darkgreen}{rgb}{0,0.45,0}
 \usepackage{aliascnt}
-\usepackage[capitalize]{cleveref}
 %\usepackage[all,2cell]{xy}
 %\UseAllTwocells
 % \usepackage{natbib}
+\usepackage[style=numeric,maxnames=10,backend=biber,%
+            hyperref=true]{biblatex}
 \usepackage{braket} % used for \setof{ ... } macro
 \usepackage{tikz-cd}
 \usepackage{tikz}
@@ -40,10 +40,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% To include references in TOC we should use this package rather than a hack.
-\usepackage{tocbibind}
+%\usepackage{tocbibind}
 %\usepackage{etoolbox}           % get \apptocmd
 %\apptocmd{\thebibliography}{\addcontentsline{toc}{section}{References}}{}{} % tell bibliography to get itself into the table of contents
 
+%% hyperref should be loaded last, except for cleveref
+\usepackage[colorlinks,citecolor=darkgreen,linkcolor=darkgreen,unicode]{hyperref}
+
+\usepackage[capitalize]{cleveref}
 
 \begin{comment}
 %%%% Header and footers
