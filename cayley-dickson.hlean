@@ -31,6 +31,38 @@ namespace bool
 
 end bool
 
+namespace join
+section
+  parameters {A B : Type}
+
+  open pushout
+
+  protected definition rec {P : join A B → Type} (Pinl : Π(x : A), P (inl x))
+    (Pinr : Π(y : B), P (inr y)) (Pglue : Π(x : A)(y : B), Pinl x =[jglue x y] Pinr y)
+      (z : join A B) : P z :=
+  pushout.rec Pinl Pinr (prod.rec Pglue) z
+
+  theorem rec_glue {P : join A B → Type} (Pinl : Π(x : A), P (inl x))
+    (Pinr : Π(y : B), P (inr y)) (Pglue : Π(x : A)(y : B), Pinl x =[jglue x y] Pinr y)
+      (x : A) (y : B) : apdo (rec Pinl Pinr Pglue) (jglue x y) = Pglue x y :=
+  !quotient.rec_eq_of_rel
+
+  protected definition elim {P : Type} (Pinl : A → P) (Pinr : B → P)
+    (Pglue : Π(x : A)(y : B), Pinl x = Pinr y) (z : join A B) : P :=
+  rec Pinl Pinr (λx y, pathover_of_eq (Pglue x y)) z
+
+  theorem elim_glue {P : Type} (Pinl : A → P) (Pinr : B → P)
+    (Pglue : Π(x : A)(y : B), Pinl x = Pinr y) (x : A) (y : B)
+    : ap (elim Pinl Pinr Pglue) (jglue x y) = Pglue x y :=
+  begin
+    apply equiv.eq_of_fn_eq_fn_inv !(pathover_constant (jglue x y)),
+    rewrite [▸*,-apdo_eq_pathover_of_eq_ap,↑join.elim],
+    apply rec_glue
+  end
+
+end
+end join
+
 open algebra
 
 namespace homotopy
@@ -42,13 +74,19 @@ structure cayley_dickson [class] (A : Type)
 (star_one : star one = one)
 (star_mul : ∀a b, star (mul a b) = mul (star b) (star a))
 
+/- possible further laws:
+   ∀a b, mul (neg a) b = neg (mul a b)
+   ∀a, star (neg a) = neg (star a)
+   …
+-/
+
 section
   open bool
 
   definition cayley_dickson_bool [instance] : cayley_dickson bool :=
   ⦃ cayley_dickson, one := tt, mul := biff, neg := bnot, star := function.id,
     one_mul := bool.rec idp idp, mul_one := bool.rec idp idp,
-    neg_neg := bool.rec idp idp, star_star := bool.rec idp idp,
+    neg_neg := bool.rec idp idp, star_star := λa, idp,
     star_one := idp, star_mul := bool.rec (bool.rec idp idp) (bool.rec idp idp) ⦄
 
 end
@@ -67,10 +105,13 @@ section
   definition carrier : Type := join A A
 
   definition one [instance] : has_one carrier :=
-  has_one.mk (inl 1)
+  ⦃ has_one, one := (inl 1) ⦄
 
-  definition neg : carrier → carrier :=
-  pushout.elim (λa, inl (- a)) (λa, inr (- a)) (λz, jglue (- pr1 z) (- pr2 z))
+  definition neg [instance] : has_neg carrier :=
+  ⦃ has_neg, neg := join.elim (λa, inl (-a)) (λb, inr (-b)) (λa b, jglue (-a) (-b)) ⦄
+
+  definition star [instance] : has_star carrier :=
+  ⦃ has_star, star := join.elim (λa, inl (a*)) (λb, inr (-b)) (λa b, jglue (a*) (-b)) ⦄
 
 end
 
