@@ -69,16 +69,34 @@ namespace homotopy
 
 structure cayley_dickson [class] (A : Type)
   extends h_space A, has_neg A, has_star A :=
+(one_star : star one = one)
 (neg_neg : ∀a, neg (neg a) = a)
 (star_star : ∀a, star (star a) = a)
-(star_one : star one = one)
 (star_mul : ∀a b, star (mul a b) = mul (star b) (star a))
 
 /- possible further laws:
-   ∀a b, mul (neg a) b = neg (mul a b)
-   ∀a, star (neg a) = neg (star a)
+   neg_mul : ∀a b, mul (neg a) b = neg (mul a b)
+   neg_star : ∀a, star (neg a) = neg (star a)
+   norm : ∀a, mul (star a) a = one   -- this expresses that A is nicely normed
    …
 -/
+
+section
+  variable {A : Type}
+
+  theorem one_mul [s : h_space A] (a : A) : 1 * a = a := !h_space.one_mul
+
+  theorem mul_one [s : h_space A] (a : A) : a * 1 = a := !h_space.mul_one
+
+  theorem one_star [s : cayley_dickson A] : @eq A (1*) 1 := !cayley_dickson.one_star
+
+  theorem star_one_mul (A : Type) [H : cayley_dickson A] (a : A)
+    : 1* * a = a :=
+  calc
+    1* * a = 1 * a : by rewrite [one_star]
+       ... = a     : one_mul
+  
+end
 
 section
   open bool
@@ -87,7 +105,7 @@ section
   ⦃ cayley_dickson, one := tt, mul := biff, neg := bnot, star := function.id,
     one_mul := bool.rec idp idp, mul_one := bool.rec idp idp,
     neg_neg := bool.rec idp idp, star_star := λa, idp,
-    star_one := idp, star_mul := bool.rec (bool.rec idp idp) (bool.rec idp idp) ⦄
+    one_star := idp, star_mul := bool.rec (bool.rec idp idp) (bool.rec idp idp) ⦄
 
 end
 
@@ -140,9 +158,25 @@ section
        { intro d, apply (jglue (- d * b*) (a* * d))⁻¹ },
        { intros c d, apply eq_pathover,
          krewrite [join.elim_glue,join.elim_glue],
-       }
+         exact sorry }
      end
      ) ⦄
+
+  definition cd_one_mul : ∀a : carrier, 1 * a = a :=
+  begin
+    fapply join.rec,
+    { intro a, apply ap inl, exact one_mul a },
+    { intro b, apply ap inr, exact star_one_mul A b },
+    { intros a b, apply eq_pathover, exact sorry },
+  end
+
+  definition cd_mul_one : ∀a : carrier, a * 1 = a :=
+  begin
+    fapply join.rec,
+    { intro a, apply ap inl, exact mul_one a },
+    { intro b, apply ap inr, exact one_mul b },
+    { intros a b, apply eq_pathover, exact sorry }
+  end
 
 end
 
