@@ -10,7 +10,18 @@ import algebra.group homotopy.join cubical.square
 
 open eq
 
--- TODO: move this to algebra hierarchy in hott std lib
+-- TODO: move all of these to hott std lib
+namespace pi
+section
+  variables {A : Type} {B : A → Type} {f g : Πa, B a}
+
+  definition ap_eval_eq_adp10 (a : A) (H : f = g) :
+    ap (λh : Πx, B x, h a) H = apd10 H a :=
+  eq.rec_on H idp
+
+end
+end pi
+
 namespace algebra
 
 structure has_star [class] (A : Type) :=
@@ -60,12 +71,16 @@ section
     apply rec_glue
   end
 
+  definition join_square {a a' : A} {b b' : B} (p : a = a') (q : b = b') :
+    square (ap inl p) (ap inr q) (jglue a b) (jglue a' b') :=
+  eq.rec_on p (eq.rec_on q hrfl)
+
 end
 end join
 
-open algebra
-
+-- Here starts the main content:
 namespace homotopy
+open algebra
 
 structure cayley_dickson [class] (A : Type)
   extends h_space A, has_neg A, has_star A :=
@@ -93,7 +108,7 @@ section
   theorem star_one_mul (A : Type) [H : cayley_dickson A] (a : A)
     : 1* * a = a :=
   calc
-    1* * a = 1 * a : by rewrite [one_star]
+    1* * a = 1 * a : by rewrite one_star
        ... = a     : one_mul
   
 end
@@ -167,7 +182,10 @@ section
     fapply join.rec,
     { intro a, apply ap inl, exact one_mul a },
     { intro b, apply ap inr, exact star_one_mul A b },
-    { intros a b, apply eq_pathover, exact sorry },
+    { intros a b, apply eq_pathover,
+      rewrite ap_id, krewrite join.elim_glue,
+      apply join_square
+    }
   end
 
   definition cd_mul_one : ∀a : carrier, a * 1 = a :=
@@ -175,8 +193,17 @@ section
     fapply join.rec,
     { intro a, apply ap inl, exact mul_one a },
     { intro b, apply ap inr, exact one_mul b },
-    { intros a b, apply eq_pathover, exact sorry }
+    { intros a b, apply eq_pathover,
+      rewrite ap_id, krewrite [ap_compose (λf, f 1) (λx y, x * y)],
+      krewrite join.elim_glue,
+      krewrite [pi.ap_eval_eq_adp10 1],
+      rewrite pi.apd10_eq_of_homotopy,
+      apply join_square
+    }
   end
+
+  definition cd_h_space [instance] : h_space carrier :=
+  ⦃ h_space, one_mul := cd_one_mul, mul_one := cd_mul_one ⦄
 
 end
 
